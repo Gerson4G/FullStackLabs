@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import {
@@ -11,8 +11,33 @@ import {
 } from "@material-ui/core";
 import colors from "../constants/colors";
 import Status from "./Status";
+import Block from './Block';
 
 const Node = ({ node, expanded, toggleNodeExpanded }) => {
+
+  const [blocks, setBlocks] = useState([]);
+
+  const getBlocks = async () => {
+      try {
+        const res = await fetch(`${node.url}/api/v1/blocks`);
+  
+        if(res.status >= 400) {
+          //error block
+        }
+  
+        const json = await res.json();
+        setBlocks(json.data)
+        //success
+      } catch (err) {
+        //another error block request
+        console.log(err)
+      }
+    };
+
+  useEffect( () => {
+    getBlocks();
+  }, []);
+
   const classes = useStyles();
   return (
     <ExpansionPanel
@@ -46,7 +71,7 @@ const Node = ({ node, expanded, toggleNodeExpanded }) => {
         </Box>
       </ExpansionPanelSummary>
       <ExpansionPanelDetails>
-        <Typography>Blocks go here</Typography>
+      {blocks.map( block => <Block key={block.id} data={block} />)}
       </ExpansionPanelDetails>
     </ExpansionPanel>
   );
