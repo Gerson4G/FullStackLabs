@@ -29,6 +29,15 @@ describe("<Nodes />", () => {
     ]
   };
 
+  const blocks = [
+    {
+      id: '2',
+      attributes: {
+        data: 'This is block'
+      }
+    }
+  ]
+
   it("should contain <Node />", () => {
     const wrapper = shallow(
       <Nodes
@@ -39,6 +48,12 @@ describe("<Nodes />", () => {
 
     expect(wrapper.find(Node).length).toEqual(2);
   });
+
+  global.fetch = jest.fn(() =>
+    Promise.resolve({
+      json: () => Promise.resolve(blocks),
+    })
+  );
 
   it("should match snapshot", () => {
     const middlewares = [thunk];
