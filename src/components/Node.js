@@ -16,13 +16,14 @@ import Block from './Block';
 const Node = ({ node, expanded, toggleNodeExpanded }) => {
 
   const [blocks, setBlocks] = useState([]);
+  const [isError, setError] = useState(false);
 
   const getBlocks = async () => {
       try {
         const res = await fetch(`${node.url}/api/v1/blocks`);
   
         if(res.status >= 400) {
-          //error block
+          setError(true);
         }
   
         const json = await res.json();
@@ -30,7 +31,7 @@ const Node = ({ node, expanded, toggleNodeExpanded }) => {
         //success
       } catch (err) {
         //another error block request
-        console.log(err)
+        setError(true);
       }
     };
 
@@ -70,8 +71,29 @@ const Node = ({ node, expanded, toggleNodeExpanded }) => {
           <Status loading={node.loading} online={node.online} />
         </Box>
       </ExpansionPanelSummary>
-      <ExpansionPanelDetails>
-      {blocks.map( block => <Block key={block.id} data={block} />)}
+      <ExpansionPanelDetails className={classes.blocks}>
+      {
+        blocks.length > 0 ?
+          blocks.map( block => <Block key={block.id} data={block} />)
+        :
+        !isError ?
+        <Typography
+          variant="subtitle1"
+          className={classes.secondaryHeading}
+        >
+          No blocks found for this node
+        </Typography>
+        : null
+      }
+      {
+        isError && 
+        (<Typography
+          variant="subtitle1"
+          className={classes.error}
+        >
+          An error ocurred while retrieving blocks
+        </Typography>)
+      }
       </ExpansionPanelDetails>
     </ExpansionPanel>
   );
@@ -84,6 +106,12 @@ const useStyles = makeStyles((theme) => ({
     "&:before": {
       backgroundColor: "unset",
     },
+  },
+  error: {
+    color: "red",
+  },
+  blocks: {
+    flexDirection: "column",
   },
   summary: {
     padding: "0 24px",
