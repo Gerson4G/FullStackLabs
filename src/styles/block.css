@@ -1,5 +1,5 @@
 .block-container {
-    background-color: gray;
+    background-color: #c4c2c2;
     display: block;
     width: 100%;
     height: auto;
@@ -8,7 +8,7 @@
 }
 
 .block-id {
-    color: blue;
+    color: #2929f7;
 }
 
 .block-data {
